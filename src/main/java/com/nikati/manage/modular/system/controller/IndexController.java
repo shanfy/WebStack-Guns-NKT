@@ -21,15 +21,12 @@ import com.nikati.manage.modular.system.dto.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.nikati.manage.core.common.node.MenuNode;
 import com.nikati.manage.modular.system.model.Category;
 import com.nikati.manage.modular.system.service.IOperationLogService;
 import com.nikati.manage.modular.system.service.impl.CategoryServiceImpl;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +57,23 @@ public class IndexController extends BaseController {
 		return "/index.html";
 	}
 
+	/**
+	 * 跳转到首页
+	 */
+	@RequestMapping("/indexSearch")
+	@ResponseBody
+	public Result<Map<String, Object>> indexSearch( @RequestParam(value = "title", required = false) String title) {
+		List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
+		List<MenuNode> titles = MenuNode.buildTitle(menus);
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("title", title);
+		List<Category> categorySiteList = categoryService.getCatogrySite(map);
+		Map<String, Object> resultMap = new HashMap<>(4);
+		resultMap.put("categorySiteList", categorySiteList);
+		resultMap.put("titles", titles);
+		return Result.successData(resultMap);
+	}
+
 	/*@RequestMapping("/search/{wd}")
 	public String s(Model model, @PathVariable(value = "wd") String wd) {
 		HashMap<String, Object> map = new HashMap<>();
@@ -79,9 +93,9 @@ public class IndexController extends BaseController {
 		return "/index.html";
 	}*/
 
-	@GetMapping("/search/{wd}")
+	@GetMapping("/search")
 	@ResponseBody
-	public Result<Map<String, Object>> s( @PathVariable(value = "wd") String wd) {
+	public Result<Map<String, Object>> s( @RequestParam(value = "title", required = false) String wd) {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("title", wd);
 		List<MenuNode> menus = categoryService.getCatogryNode(map);

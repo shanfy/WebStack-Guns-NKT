@@ -154,6 +154,7 @@
         };
 
         AbstractChosen.prototype.set_default_text = function() {
+            debugger
             if (this.form_field.getAttribute("data-placeholder")) {
                 this.default_text = this.form_field.getAttribute("data-placeholder");
             } else if (this.is_multiple) {
