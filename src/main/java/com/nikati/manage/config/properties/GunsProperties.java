@@ -18,8 +18,10 @@ package com.nikati.manage.config.properties;
 import cn.stylefeng.roses.core.util.ToolUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import static cn.stylefeng.roses.core.util.ToolUtil.getTempPath;
 
@@ -56,10 +58,24 @@ public class GunsProperties {
     private Integer sessionValidationInterval = 150 * 60;
 
     public String getFileUploadPath() {
+       /* File path = null;
+        try {
+            path = new File(ResourceUtils.getURL("classpath:").getPath());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if(path.exists()){
+            File upload = new File(path.getAbsolutePath(),"static"+File.separator +"tmp" );
+            if(!upload.exists()){
+                upload.mkdirs();
+            }
+            return upload.getAbsolutePath()+ File.separator ;
+        }*/
         //如果没有写文件上传路径,保存到临时目录
         if (ToolUtil.isEmpty(fileUploadPath)) {
             return getTempPath();
-        } else {
+        }
+        else {
             //判断有没有结尾符,没有得加上
             if (!fileUploadPath.endsWith(File.separator)) {
                 fileUploadPath = fileUploadPath + File.separator;

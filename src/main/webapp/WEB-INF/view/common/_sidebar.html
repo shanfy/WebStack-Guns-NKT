@@ -20,28 +20,33 @@
             </div>
         </header>
         <ul id="main-menu" class="main-menu">
-            <li v-for="title in titles"  :class="(title.children ==null || title.children.length == 0) ? '' : 'has-sub'">
-                <template v-if="title.children ==null || title.children.length == 0" >
-                    <a :href="['#' + title.name]" class="smooth">
-                        <i class="fa fa-fw" :class="title.icon"></i>
-                        <span class="title">{{title.name}}</span>
-                    </a>
-                </template>
-                <template v-else>
-                    <a v-on:click="clickExpand">
-                        <i class="fa fa-fw" :class="title.icon"></i>
-                        <span class="title">{{title.name}}</span>
-                    </a>
-                    </a>
-                    <ul>
-                        <li v-for="subTitle in title.children">
-                            <a :href="['#' + subTitle.name]" class="smooth">
-                                <span class="title">{{subTitle.name}}</span>
-                            </a>
-                        </li>
-                    </ul>
-                </template>
+            @for(title in titles){
+            @if(tool.isEmpty(title.children)){
+            <li>
+                <a href="#${title.name}" class="smooth">
+                    <i class="fa fa-fw ${title.icon}"></i>
+                    <span class="title">${title.name}</span>
+                </a>
             </li>
+            @}else{
+            <li>
+                <a>
+                    <i class="fa fa-fw ${title.icon}"></i>
+                    <span class="title">${title.name}</span>
+                </a>
+                <ul>
+                    @for(subTitle in title.children){
+                    <li>
+                        <a href="#${subTitle.name}" class="smooth">
+                            <span class="title">${subTitle.name}</span>
+                        </a>
+                    </li>
+                    @}
+                </ul>
+            </li>
+            @}
+            @}
+
             <div class="submit-tag">
                 <a href="/about">
                     <i class="linecons-heart"></i>
@@ -52,45 +57,3 @@
         </ul>
     </div>
 </div>
-<script >
-    var searchVal = $("#type-zhannei").val();
-    $(function() {
-        //取单项数据，用于渲染页面
-        EZUI.cloud.GET( rootPath+"/search?title="+searchVal , {},
-            function(result) {
-                var data = result.data;
-                var categorySiteList = data.categorySiteList;
-                var titles = data.titles;
-                var vueForm = new Vue({
-                    el : '#main-menu',
-                    data : {
-                        categorySiteList : categorySiteList,
-                        titles : titles,
-                    },
-                    methods :{
-                        clickExpand:function (ev){
-                            ev.preventDefault();
-                            var $li = $(ev.currentTarget).parent('li');
-                            var $sub = $li.children('ul');
-                            var toggle_others = public_vars.$sidebarMenu.hasClass('toggle-others');
-                            if(toggle_others)
-                            {
-                                sidebar_menu_close_items_siblings($li);
-                            }
-
-                            if($li.hasClass('expanded') || $li.hasClass('opened'))
-                                sidebar_menu_item_collapse($li, $sub);
-                            else
-                                sidebar_menu_item_expand($li, $sub);
-                        }
-                    },
-                    computed :{
-
-                    },
-                    filters :{
-
-                    }
-                });
-            });
-    });
-</script>

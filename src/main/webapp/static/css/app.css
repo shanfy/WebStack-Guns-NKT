@@ -8966,7 +8966,8 @@ a.text-yellow:hover {
 }
 
 .text-gray {
-    color: #555
+    color: #555;
+    font-weight: bold;
 }
 
 a.text-gray:hover {

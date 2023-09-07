@@ -1175,6 +1175,7 @@
 
         // 插入链接
         _insertLink: function _insertLink(text, link) {
+            debugger
             if (!text || !link) {
                 return;
             }

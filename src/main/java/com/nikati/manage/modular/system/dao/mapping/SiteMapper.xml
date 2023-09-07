@@ -5,15 +5,15 @@
 
     <select id="selectByPrimaryKey" resultType="com.nikati.manage.modular.system.model.Site" parameterType="java.lang.Integer">
         select s.*,c.title categoryTitle
-        from site s left join category c on s.category_id = c.id
-        where s.id = #{id}
+        from site s left join category c on s.category_id = c.id and c.logic_delete=0
+        where s.id = #{id}  and s.logic_delete=0
     </select>
 
 
     <select id="getList" resultType="com.nikati.manage.modular.system.model.Site" parameterType="map">
         select s.*,c.title categoryTitle
-        from site s left join category c on s.category_id = c.id
-        where 1=1
+        from site s left join category c on s.category_id = c.id and c.logic_delete=0
+        where s.logic_delete=0
         <if test="title != null and title != ''">
             and (
             s.title like CONCAT('%',#{title},'%')
@@ -23,13 +23,14 @@
         <if test="categoryId != null and categoryId != 0">
             and (s.category_id = #{categoryId} or s.category_id in ( select id from category where parent_id = #{categoryId} ))
         </if>
+        order by s.create_time
         <if test="offset != null">LIMIT #{offset},#{size}</if>
     </select>
 
     <select id="getTotalCount" resultType="java.lang.Integer" parameterType="map">
         select count(1)
         from site
-        where 1=1
+        where logic_delete=0
         <if test="title != null and title != ''">
             and (
             title like CONCAT('%',#{title},'%')
@@ -42,9 +43,9 @@
     </select>
 
 
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-		delete from site where id = #{id}
-	</delete>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		update site set logic_delete where id = #{id}  and logic_delete=0
+	</update>
 
 
     <insert id="insertSelective" parameterType="com.nikati.manage.modular.system.model.Site" useGeneratedKeys="true"
@@ -56,7 +57,8 @@
             <if test="thumb != null">thumb=#{thumb},</if>
             <if test="description != null">description=#{description},</if>
             <if test="url != null">url=#{url},</if>
-            create_time=now()
+            create_time=now(),
+            logic_delete=0
         </set>
     </insert>
 
@@ -70,7 +72,7 @@
             <if test="url != null">url=#{url},</if>
             update_time=now()
         </set>
-        where id = #{id}
+        where id = #{id}  and logic_delete=0
     </update>
 
 

@@ -62,6 +62,7 @@ public class IndexController extends BaseController {
 	 */
 	@RequestMapping("/indexSearch")
 	@ResponseBody
+	@Deprecated
 	public Result<Map<String, Object>> indexSearch( @RequestParam(value = "title", required = false) String title) {
 		List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
 		List<MenuNode> titles = MenuNode.buildTitle(menus);
@@ -74,7 +75,7 @@ public class IndexController extends BaseController {
 		return Result.successData(resultMap);
 	}
 
-	/*@RequestMapping("/search/{wd}")
+	@RequestMapping("/search/{wd}")
 	public String s(Model model, @PathVariable(value = "wd") String wd) {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("title", wd);
@@ -91,11 +92,11 @@ public class IndexController extends BaseController {
 		model.addAttribute("titles", titles);
 		System.out.println(titles);
 		return "/index.html";
-	}*/
+	}
 
-	@GetMapping("/search")
+	@GetMapping("/search_json")
 	@ResponseBody
-	public Result<Map<String, Object>> s( @RequestParam(value = "title", required = false) String wd) {
+	public Result<Map<String, Object>> s_json( @RequestParam(value = "title", required = false) String wd) {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("title", wd);
 		List<MenuNode> menus = categoryService.getCatogryNode(map);

@@ -8,40 +8,43 @@
         id,title,sort,icon,create_time createTime,parent_id parentId,levels
         from category
         where id = #{id}
+        and logic_delete=0
     </select>
 
     <select id="getParentTitleById" resultType="com.nikati.manage.modular.system.model.Category" parameterType="java.lang.Integer">
         select title
         from category
-        where id = (select parent_id from category where id = #{id})
+        where id = (select parent_id from category where id = #{id}  and logic_delete=0 )
+        and logic_delete=0
     </select>
 
     <select id="getCatogry" resultType="map" parameterType="map">
         select
         id,title,sort,icon,create_time createTime,parent_id parentId,levels
         from category
-        where 1=1
+        where logic_delete=0
         <if test="title != null and title != ''">
             and title like CONCAT('%',#{title},'%')
         </if>
+        order by sort, create_time desc
     </select>
 
     <select id="getList" resultType="com.nikati.manage.modular.system.model.Category" parameterType="map">
         select
         id,title,sort,icon,create_time createTime,parent_id parentId,levels
         from category
-        where 1 =1
+        where logic_delete=0
         <if test="title != null and title != ''">
             and (
             title like CONCAT('%',#{title},'%')
             )
         </if>
-        order by sort
+        order by levels, sort, create_time
     </select>
 
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-		delete from category where id = #{id}
-	</delete>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		update category set logic_delete=1 where id = #{id}  and logic_delete=0
+	</update>
 
     <insert id="insertSelective" parameterType="com.nikati.manage.modular.system.model.Category" useGeneratedKeys="true"
             keyProperty="id">
@@ -52,7 +55,8 @@
             <if test="title != null">title=#{title},</if>
             <if test="icon != null">icon=#{icon},</if>
             <if test="levels != null">levels=#{levels},</if>
-            create_time=now()
+            create_time=now(),
+            logic_delete = 0
         </set>
     </insert>
 
@@ -66,7 +70,7 @@
             <if test="levels != null">levels=#{levels},</if>
             update_time=now()
         </set>
-        where id = #{id}
+        where id = #{id}  and logic_delete=0
     </update>
 
     <select id="tree" resultType="com.nikati.manage.core.common.node.ZTreeNode">
@@ -79,13 +83,14 @@
                            'false'
                        END
                    ) as isOpen from category
+            where logic_delete=0 order by sort, create_time desc
     </select>
 
     <select id="getCatogryNode" resultType="com.nikati.manage.core.common.node.MenuNode" parameterType="map">
         select
         id,title name,sort num,icon,create_time createTime,parent_id parentId,levels,1 ismenu
-        from category
-        order by sort
+        from category  where logic_delete=0
+        order by sort, create_time desc
     </select>
 
 
